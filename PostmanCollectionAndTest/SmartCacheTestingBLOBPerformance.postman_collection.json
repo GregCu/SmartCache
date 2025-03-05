@@ -1,0 +1,214 @@
+{
+	"info": {
+		"_postman_id": "819c94fc-b538-47ab-bd2b-d639ff62328e",
+		"name": "SmartCacheTestingBLOBPerformance",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14587976"
+	},
+	"item": [
+		{
+			"name": "AddEmail",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let emails = JSON.parse(pm.collectionVariables.get(\"allEmails\")) || [];\r",
+							"let randomEmail = emails[Math.floor(Math.random() * emails.length)]; // Pick a random email\r",
+							"\r",
+							"pm.variables.set(\"email\", randomEmail);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7292/emails/{{email}}",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7292",
+					"path": [
+						"emails",
+						"{{email}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetEmail",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"let getEmails = JSON.parse(pm.collectionVariables.get(\"getEmails\")) || [];\r",
+							"\r",
+							"let randomEmail = getEmails[Math.floor(Math.random() * getEmails.length)];\r",
+							"\r",
+							"pm.variables.set(\"email\", randomEmail);\r",
+							"\r",
+							"console.log(`🔍 Sending GET Request for: ${randomEmail}`);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const successCodes = [200, 204, 404, 409]; // 404 (Not Found) is allowed\r",
+							"\r",
+							"if (!successCodes.includes(pm.response.code)) {\r",
+							"    console.error(`⚠️ Error in GET Request for ${pm.variables.get(\"email\")}:`, pm.response.json());\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7292/emails/{{email}}",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7292",
+					"path": [
+						"emails",
+						"{{email}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"// Known domains (real domains)\r",
+					"const knownDomains = [\"gmail.com\", \"yahoo.com\", \"outlook.com\", \"hotmail.com\", \"aol.com\",\r",
+					"                      \"icloud.com\", \"mail.com\", \"zoho.com\", \"protonmail.com\", \"yandex.com\"];\r",
+					"\r",
+					"// Number of emails per domain\r",
+					"const numEmailsPerKnownDomain = 5000;\r",
+					"const numEmailsPerRandomDomain = 1000;\r",
+					"const numRandomDomains = 10; // Number of random domains\r",
+					"\r",
+					"// Generate random domains\r",
+					"function generateRandomDomain() {\r",
+					"    return `random${Math.floor(Math.random() * 900 + 100)}.com`;\r",
+					"}\r",
+					"\r",
+					"// Generate emails with sequential usernames (username0001, username0002, ...)\r",
+					"function generateEmail(domain, index) {\r",
+					"    return `username${String(index).padStart(4, '0')}@${domain}`;\r",
+					"}\r",
+					"\r",
+					"// Generate non-existing emails\r",
+					"function generateNonExistEmail(domain, index) {\r",
+					"    return `nonexistent${String(index).padStart(4, '0')}@${domain}`;\r",
+					"}\r",
+					"\r",
+					"// Create email lists\r",
+					"let allEmails = [];\r",
+					"let realDomainEmails = [];\r",
+					"let getEmails = [];\r",
+					"\r",
+					"// **Generate 5000 emails per known domain**\r",
+					"knownDomains.forEach(domain => {\r",
+					"    for (let i = 1; i <= numEmailsPerKnownDomain; i++) {\r",
+					"        let email = generateEmail(domain, i);\r",
+					"        allEmails.push(email);\r",
+					"        realDomainEmails.push(email); // Store real domain emails separately\r",
+					"    }\r",
+					"});\r",
+					"\r",
+					"// **Generate 1000 emails per random domain**\r",
+					"let randomDomains = [];\r",
+					"for (let i = 0; i < numRandomDomains; i++) {\r",
+					"    let randomDomain = generateRandomDomain();\r",
+					"    randomDomains.push(randomDomain);\r",
+					"\r",
+					"    for (let j = 1; j <= numEmailsPerRandomDomain; j++) {\r",
+					"        allEmails.push(generateEmail(randomDomain, j));\r",
+					"    }\r",
+					"}\r",
+					"\r",
+					"// **Generate GET emails - 70% existing, 30% non-existing**\r",
+					"let getEmailCount = Math.ceil(allEmails.length * 0.1); // 10% of total emails\r",
+					"let existingCount = Math.ceil(getEmailCount * 0.7); // 70% existing\r",
+					"let nonExistingCount = getEmailCount - existingCount; // 30% non-existing\r",
+					"\r",
+					"// **Add 70% existing emails for GET**\r",
+					"for (let i = 0; i < existingCount; i++) {\r",
+					"    getEmails.push(realDomainEmails[i]); // Only from real domains\r",
+					"}\r",
+					"\r",
+					"// **Add 30% non-existing emails for GET**\r",
+					"knownDomains.forEach(domain => {\r",
+					"    for (let i = 1; i <= Math.ceil(nonExistingCount / knownDomains.length); i++) {\r",
+					"        getEmails.push(generateNonExistEmail(domain, i));\r",
+					"    }\r",
+					"});\r",
+					"\r",
+					"// Store variables in Postman\r",
+					"pm.collectionVariables.set(\"allEmails\", JSON.stringify(allEmails));\r",
+					"pm.collectionVariables.set(\"getEmails\", JSON.stringify(getEmails));\r",
+					"\r",
+					"console.log(\"✅ Total Emails for POST:\", allEmails.length);\r",
+					"console.log(\"✅ GET Emails (70% existing, 30% non-existent, no random domains):\", getEmails.length);\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "allEmails",
+			"value": ""
+		},
+		{
+			"key": "getEmails",
+			"value": ""
+		}
+	]
+}
