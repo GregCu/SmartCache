@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCacheApiClient", "SmartCacheApiClient\SmartCacheApiClient.csproj", "{3010AB87-904A-4B77-AA64-EF243B3C3FE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCacheSilo", "SmartCacheSilo\SmartCacheSilo.csproj", "{AD19AF0E-8176-4CE7-8C75-079690FEFC1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCacheGrains", "SmartCacheGrains\SmartCacheGrains.csproj", "{01989F3A-28E4-40A4-A7A9-8BA18DA57226}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraditionalApproach", "TraditionalApproach\TraditionalApproach.csproj", "{EEA21B5A-0D28-48A1-805E-361B1AC14F64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3010AB87-904A-4B77-AA64-EF243B3C3FE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3010AB87-904A-4B77-AA64-EF243B3C3FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3010AB87-904A-4B77-AA64-EF243B3C3FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3010AB87-904A-4B77-AA64-EF243B3C3FE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD19AF0E-8176-4CE7-8C75-079690FEFC1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD19AF0E-8176-4CE7-8C75-079690FEFC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD19AF0E-8176-4CE7-8C75-079690FEFC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD19AF0E-8176-4CE7-8C75-079690FEFC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01989F3A-28E4-40A4-A7A9-8BA18DA57226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01989F3A-28E4-40A4-A7A9-8BA18DA57226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01989F3A-28E4-40A4-A7A9-8BA18DA57226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01989F3A-28E4-40A4-A7A9-8BA18DA57226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEA21B5A-0D28-48A1-805E-361B1AC14F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEA21B5A-0D28-48A1-805E-361B1AC14F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEA21B5A-0D28-48A1-805E-361B1AC14F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEA21B5A-0D28-48A1-805E-361B1AC14F64}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B972C09-EDF0-4F40-BED0-FF54CA8AC231}
+	EndGlobalSection
+EndGlobal
