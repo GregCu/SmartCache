@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Logger\SerilogLogger.csproj" />
     <ProjectReference Include="..\SmartCacheGrains\SmartCacheGrains.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using LoggingLibrary;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
+using Serilog;
 
 namespace SmartCacheSilo;
 
@@ -8,8 +11,23 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        var host = CreateHostBuilder(args).Build();
-        await host.RunAsync();
+        SerilogLogger.ConfigureLogging(new ServiceCollection());
+
+        try
+        {
+            SerilogLogger.LogSiloEvent("Orleans Silo is starting");
+            var host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
+            SerilogLogger.LogSiloEvent("Orleans Silo is running.");
+        }
+        catch (Exception ex)
+        {
+            SerilogLogger.LogError(ex, "Orleans Silo encountered an error!");
+        }
+        finally
+        {
+            SerilogLogger.LogSiloEvent("Orleans Silo is shutting down.");
+        }
     }
 
     static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -30,7 +48,12 @@ class Program
                         {
                             options.BlobServiceClient = new Azure.Storage.Blobs.BlobServiceClient("UseDevelopmentStorage=true;");
                         });
+                        SerilogLogger.ConfigureLogging(services);
                     })
-                    .ConfigureLogging(logging => logging.AddConsole());
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        logging.AddSerilog();
+                    });
             });
 }
