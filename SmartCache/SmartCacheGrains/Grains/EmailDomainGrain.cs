@@ -1,4 +1,5 @@
-﻿using SmartCacheGrains.Abstractions;
+﻿using LoggingLibrary;
+using SmartCacheGrains.Abstractions;
 using SmartCacheGrains.State;
 
 namespace SmartCacheGrains.Grains;
@@ -21,6 +22,7 @@ public class EmailDomainGrain : Grain, IEmailDomainGrain, IRemindable
         }
 
         await this.RegisterOrUpdateReminder("SaveGrainStateReminder", TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+        SerilogLogger.LogGrainEvent(nameof(EmailDomainGrain), "Activated");
 
         await base.OnActivateAsync(cancellationToken);
     }
@@ -79,24 +81,47 @@ public class EmailDomainGrain : Grain, IEmailDomainGrain, IRemindable
 
     public async Task<bool> EmailExists(string email)
     {
-        if (_state.State.Emails.Contains(email))
+        try
         {
-            return true;
-        }
+            bool exist;
+            if (_state.State.Emails.Contains(email))
+            {
+                exist = true;
+                SerilogLogger.LogGrainEvent(nameof(EmailDomainGrain), $"Email {email} exists");
+                return exist;
+            }
 
-        await _state.ReadStateAsync();
-        return _state.State.Emails.Contains(email);
+            await _state.ReadStateAsync();
+
+            var exists = _state.State.Emails.Contains(email);
+            SerilogLogger.LogGrainEvent(nameof(EmailDomainGrain), $"Email {email} {(exists ? "exists" : "does not exist")}");
+            return exists;
+        }
+        catch (Exception ex)
+        {
+            SerilogLogger.LogError(ex, $"Error checking email: {email}");
+            throw;
+        }
     }
 
     public async Task<bool> AddEmail(string email)
     {
-        if (_state.State.Emails.Contains(email))
+        try
         {
-            return false;
-        }
+            if (_state.State.Emails.Contains(email))
+            {
+                SerilogLogger.LogGrainEvent(nameof(EmailDomainGrain), $"Email {email} already stored.");
+                return false;
+            }
 
-        _state.State.Emails.Add(email);
-        //await _state.WriteStateAsync(); //storing only on ReceiveReminder
-        return true;
+            _state.State.Emails.Add(email);
+            SerilogLogger.LogGrainEvent(nameof(EmailDomainGrain), $"Email {email} added.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            SerilogLogger.LogError(ex, $"Error adding email: {email}");
+            throw;
+        }
     }
 }

@@ -31,7 +31,6 @@ Testing was conducted using:
 Considerations:
 - In tests, 404 (Not Found) and 409 (Conflict) errors are expected responses and not considered issues.
 - Prefilled data: The blob storage contained 10 times more emails than the database.
-- Since DB approach is as simple as possible there is no logging added
 
 Conclusion
 
